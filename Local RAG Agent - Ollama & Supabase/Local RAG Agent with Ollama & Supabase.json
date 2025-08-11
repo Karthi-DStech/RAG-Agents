@@ -1,0 +1,621 @@
+{
+  "name": "Local RAG Agent with Ollama & Supabase",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1c58a9c3-a3e1-46a8-a9ef-071a2adf282d",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b-instruct-q4_K_M",
+        "options": {}
+      },
+      "id": "92d643c4-8ff1-4a04-b77f-c3551c8c750f",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        368,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b-instruct-q4_K_M",
+        "options": {}
+      },
+      "id": "3a38a22e-58ee-414b-9ad4-96630a8ea27f",
+      "name": "Ollama Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "name": "documents",
+        "topK": 3
+      },
+      "id": "75036d30-1ee2-42ca-bc2f-a9f2a42a6b5b",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "=data",
+        "options": {}
+      },
+      "id": "2d2a7522-888a-40e9-b407-360182af5fb8",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        928,
+        640
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{ $('Local File Trigger').item.json.path }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "8f73bcd4-c35e-4df7-9ddb-1bbdf7bbbbd0",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 100,
+        "options": {}
+      },
+      "id": "60dfe348-b1c4-4023-b484-87c11de53f45",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "id": "9e1960ca-0cc2-40f2-ba10-cd752e963072",
+      "name": "Embeddings Ollama1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Local RAG AI Agent with Chat Interface",
+        "height": 527.3027193303974,
+        "width": 969.0343804425795
+      },
+      "id": "17ee33d4-f804-4d14-a620-a499ce780798",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Agent Tools for Local RAG",
+        "height": 528.85546469693,
+        "width": 583.4552380860637,
+        "color": 4
+      },
+      "id": "df843d04-7c2a-4f35-b03e-ef03d215e294",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow to Create Local Knowledgebase",
+        "height": 705.2695614889159,
+        "width": 1568.9362829025763,
+        "color": 5
+      },
+      "id": "6f25c54d-53e6-4852-8c2b-652201c6ca9f",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d5f04044-9943-4ebc-95db-f1b5cbc6e2f6",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        64,
+        128
+      ],
+      "webhookId": "4b3b1838-d6b3-447e-9d79-d0931eddb9f8"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e3e6b14c-65f8-4a4a-b545-c8aa44171fcf",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "invoke_n8n_agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c7369f93-d2b8-49eb-8f25-2d6324c4219f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        64,
+        304
+      ],
+      "webhookId": "4a839da9-b8a2-45f8-bcaf-c484f9a5912d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "56c23124-e31c-483f-8726-6342dc83aff1",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        448,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75ebfdef-c8e2-4c3e-b716-1479d0cc2a73",
+              "name": "chatInput",
+              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "59b7a20f-0626-4861-93e2-015d430c266e",
+              "name": "sessionId",
+              "value": "={{ $json?.sessionId || $json.body.sessionId}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "759fefb3-9ab6-4041-a62b-6c8f04ee74c2",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        240
+      ],
+      "id": "e7d04ef8-5a42-4a3a-8715-0262a9ebfc14",
+      "name": "Supabase Vector Store"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        384
+      ],
+      "id": "76700602-9e5d-4762-ad2d-b935dd831186",
+      "name": "Embeddings Ollama2"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        640
+      ],
+      "id": "e3d9fc34-7753-433a-837f-b656441bfa15",
+      "name": "Supabase Vector Store1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{ $json.path }}*"
+      },
+      "id": "514bb1c4-73d6-48ee-9740-293f777a13bc",
+      "name": "Delete Old Doc Rows",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        464,
+        848
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "/data/shared",
+        "events": [
+          "add",
+          "change"
+        ],
+        "options": {
+          "followSymlinks": true,
+          "usePolling": true
+        }
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        848
+      ],
+      "id": "6ebdab53-653c-46c9-b472-4a982d3e296e",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('Local File Trigger').item.json.path }}",
+        "options": {
+          "dataPropertyName": "=data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        640,
+        640
+      ],
+      "id": "025e25d0-7577-4569-82ed-fd5909deca04",
+      "name": "Read/Write Files from Disk",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e051736f-949a-4230-bf32-c9ade2674b12",
+              "leftValue": "={{ $json.event }}",
+              "rightValue": "add",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        672
+      ],
+      "id": "da4a504c-2761-4ba0-877b-5d0e56e28003",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Doc Rows": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete Old Doc Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "249975f7-f9f7-4619-afeb-9b8002b542c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6717472e0cab5035fbb6232a46629a9ea1bd0552058e36c41b7384a6e5210b97"
+  },
+  "id": "2EntPCpzsC4JKSvP",
+  "tags": []
+}

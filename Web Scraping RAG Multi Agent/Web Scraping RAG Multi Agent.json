@@ -1,0 +1,1619 @@
+{
+  "name": "Web Scraping RAG Multi Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aa9156b4-7556-4229-938b-38e0d9391015",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "sitemap",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -640,
+        848
+      ],
+      "id": "79497a17-42f1-4fb9-9896-72e8e30561ae",
+      "name": "If sitemap exists"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.content.baseUrl }}/robots.txt",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -864,
+        848
+      ],
+      "id": "7763541b-00bf-4fe2-8b2c-d8c0da8a0d37",
+      "name": "Check robots",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "robots.txt\n\nWebsites use the robots.txt file to tell Google what can be crawled and what cannot.\n\nMost companies use this file.",
+        "height": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        624
+      ],
+      "id": "84f9c4e9-f89e-4cc4-8dca-f195054442ae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "sitemap.xml\n\nThis file gives us a directory (an overview) of the website.",
+        "height": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        624
+      ],
+      "id": "5ea1c690-225e-43d4-b98a-5873657844f2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1008
+      ],
+      "id": "f3e5d505-fefd-48d5-b47f-2de3ce3ae838",
+      "name": "XML",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "XML Check\n\nSome websites have multiple sitemap XML files, often due to different categories. Simpler websites typically only have one XML file.",
+        "height": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        768
+      ],
+      "id": "7dbe3fe7-8086-43d1-829d-bb468beba5c6",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b9a4d5b0-2385-49cd-9228-df1c56284cf1",
+              "leftValue": "={{ $json.message.content.pathway }}",
+              "rightValue": "url",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        944
+      ],
+      "id": "7ccc6d95-ffc5-4e5c-8444-7f19108a1a5c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        928,
+        688
+      ],
+      "id": "faf96539-5dae-4240-b834-6840955354d3",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        1008
+      ],
+      "id": "68195c82-4896-4e10-ad3a-2cff7cb3270a",
+      "name": "Markdown1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        944
+      ],
+      "id": "3164dece-7e96-48ed-8c5d-626c041428bf",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "function extractAllLocs(data) {\n    const locs = [];\n\n    function findLocs(obj) {\n        if (!obj) return;\n\n        // If it's an object, check for loc key and continue recursion\n        if (typeof obj === 'object') {\n            for (const key in obj) {\n                if (key === 'loc' && typeof obj[key] === 'string') {\n                    locs.push(obj[key]);\n                } else {\n                    findLocs(obj[key]);\n                }\n            }\n        }\n        // If it's an array, loop through each item\n        else if (Array.isArray(obj)) {\n            obj.forEach(findLocs);\n        }\n    }\n\n    findLocs(data);\n    return locs.map(url => ({ url }));\n}\n\n// Usage in n8n:\nconst data = $input.first().json.urlset; // Extracting from the urlset\n\nconst urls = extractAllLocs(data);\n\nreturn urls.map(item => ({ json: item }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        1008
+      ],
+      "id": "b9c463cc-7d07-4d5d-bbf8-c5f737893eec",
+      "name": "find URLs"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          },
+          "allowUnauthorizedCerts": false,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        1008
+      ],
+      "id": "70c4ba30-29bd-4599-91da-9b79c153f082",
+      "name": "GET URLs"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        1008
+      ],
+      "id": "a34a8b6d-01e1-4c1a-9e8c-dc12352a2857",
+      "name": "GET XML",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "options": {
+          "pineconeNamespace": "flowsie"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        688
+      ],
+      "id": "86c70ee3-a4a8-49a4-b75f-db79962e0b6f",
+      "name": "Pinecone Vector Store1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        864
+      ],
+      "id": "6ba41ffb-5455-4e46-b42d-bf337cd8afeb",
+      "name": "Embeddings OpenAI1"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        848
+      ],
+      "id": "e61b3be9-6e74-4883-8427-bab524b49fed",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 20,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        864
+      ],
+      "id": "8c17e664-7f74-416a-b2f7-5e41872c087b",
+      "name": "Recursive Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "options": {
+          "pineconeNamespace": "flowsie"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1200
+      ],
+      "id": "94c39bc0-6e39-4f12-a1b8-c15186989548",
+      "name": "Pinecone Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        1232
+      ],
+      "id": "8c4bf326-431a-4b6c-a2a7-e68b4e640742",
+      "name": "Embeddings OpenAI"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        944,
+        1232
+      ],
+      "id": "ab2198f6-18ca-44b6-83d8-a652a4907e55",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 20,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        800,
+        1232
+      ],
+      "id": "bc318bcf-7d2a-4ce5-9ff0-f5bcc2eaf519",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "formTitle": "URL",
+        "formDescription": "URLs zum Scrapen",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "URL",
+              "placeholder": "Deine URL",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1040,
+        1072
+      ],
+      "id": "9a2cd6b7-6940-4b57-9ec6-844b54ea7d43",
+      "name": "On form submission",
+      "webhookId": "939e3b7f-690c-4414-8321-4e4a603c8bfa"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -64
+      ],
+      "id": "20fb73cd-1321-4da3-9cfb-2f43075a6043",
+      "name": "When chat message received",
+      "webhookId": "854c829c-2ce6-426f-89e2-ed44d33182f3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant for flowise, langchain and n8n. you have a flowise_vector tool with rag and a vectordatabase and you use it to answer the question. \n\nYou also have an access to a tool called URL list scraping tool. If the user give a list of URL and ask you to use the URL's and add it in the database, use the tool to scrape the website and add it in the vector database. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "3ba39d10-352a-4480-9a97-b44bf6e03be3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        128
+      ],
+      "id": "8a4f45bf-136b-4239-82d3-bdf5cac53c46",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 12
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        128
+      ],
+      "id": "a467c547-8e73-4007-97ad-4b9bbb5916f6",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        288
+      ],
+      "id": "7e3f9d61-41f0-4489-95cf-5403c9daae1e",
+      "name": "OpenAI Chat Model1"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "options": {
+          "pineconeNamespace": "flowsie"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        288
+      ],
+      "id": "1b975827-0eb3-415e-9807-8cb61b4f7f34",
+      "name": "Pinecone Vector Store2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        416
+      ],
+      "id": "0b96fea3-8009-4aa1-9ce0-204a7b1fc5df",
+      "name": "Embeddings OpenAI2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a URL normalization assistant. Your task is to convert any input URL into its **standard base URL format** and return the result as JSON.\n\nNormalization Rules:\n1. Ensure the URL starts with `https://` (add it if missing).\n2. Remove `www.` unless it is critical for the domain's identity.\n3. Remove everything after the domain (paths, query strings, fragments).\n4. Preserve subdomains (e.g., `blog.example.com` → `https://blog.example.com`).\n5. Convert the domain part to lowercase.\n6. Output the result in JSON format as:\n   {\n     \"baseUrl\": \"https://example.com\"\n   }\n\nExamples:\nInput: `n8n.io/path/page`\nOutput: `{ \"baseUrl\": \"https://n8n.io\" }`\n\nInput: `http://www.Example.COM/query=1`\nOutput: `{ \"baseUrl\": \"https://example.com\" }`\n\nReturn **only the JSON object** in the output. No additional text or explanations.\n",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.URL }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -768,
+        1072
+      ],
+      "id": "2b5248dd-52c3-47fa-a879-cf833401e9ac",
+      "name": "Make nice URLs",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=output the sitemap value in json format of this structure:\n\n{\"sitemap\":\"www.example.com/sitemap.xml:}\n\nNote, only output one single sitemap value. If there are multiple, make the best choice on which is the correct one to use",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -416,
+        624
+      ],
+      "id": "77c09032-03b6-4fd8-825b-83597152c83e",
+      "name": "Search Sitemap",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=extract each of the seperate loc elements and return a JSON object as below, make sure that the first key value pair identifies if the pathways are regular urls or xml:\n\n{\n\"pathway\": \"xml\"\n\"loc1\":\"example1.com.xml\",\n\"loc2\":\"example2.com.xml\",\n\"loc3\":\"example3.com.xml\"\n}\n\nor\n\n\n{\n\"pathway\": \"url\"\n\"loc1\":\"example1.com\",\n\"loc2\":\"example2.com\",\n\"loc3\":\"example3.com\"\n}\n",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        80,
+        944
+      ],
+      "id": "f231cbe4-0ddf-4830-9c0b-46cdc5fbab40",
+      "name": "Categories or URLs",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        736,
+        256
+      ],
+      "id": "bad4dfec-3d43-4571-a9c5-b12b773ce032",
+      "name": "Markdown2"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "options": {
+          "pineconeNamespace": "flowsie"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        256
+      ],
+      "id": "bb10168a-2376-414e-b4de-fc5e188d1079",
+      "name": "Pinecone Vector Store3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        432
+      ],
+      "id": "494248a6-331e-4afe-93f2-f34e3f76460b",
+      "name": "Embeddings OpenAI3"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        416
+      ],
+      "id": "ce101a34-29a9-4de1-8bfb-13341df6ec03",
+      "name": "Default Data Loader2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst items = $input.all();\n\n// Function to convert markdown to plain text\nfunction convertMarkdownToPlainText(markdown) {\n  // Ensure we're working with a string\n  let plainText = String(markdown);\n  \n  // Remove links: [text](URL)\n  plainText = plainText.replace(/\\[([^\\]]+)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove images: ![alt text](URL)\n  plainText = plainText.replace(/!\\[([^\\]]*)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove headers: # Header\n  plainText = plainText.replace(/(#+)\\s*(.*)/g, '$2');\n  \n  // Remove bold and italic formatting\n  plainText = plainText.replace(/\\*\\*|\\*|__|_/g, '');\n  \n  // Remove HTML special characters\n  plainText = plainText.replace(/([<>])/g, '');\n  \n  // Remove extra line breaks\n  plainText = plainText.replace(/\\n\\s*\\n/g, '\\n');\n  \n  // Remove bullet points or numbered list formatting\n  plainText = plainText.replace(/^\\s*[-*+]\\s+/gm, '');\n  \n  return plainText.trim();\n}\n\n// Process all items and combine them with page numbers and clear formatting\nconst combinedContent = items.map((item, index) => {\n  let content;\n  if (typeof item === 'object' && item !== null) {\n    content = item.data || item.content || item.text || JSON.stringify(item);\n  } else {\n    content = String(item);\n  }\n  \n  const pageNumber = index + 1;\n  const processedContent = convertMarkdownToPlainText(content);\n  \n  return `Page ${pageNumber}\\n──────────────────\\n\\n${processedContent}\\n\\n\\n`;\n}).join('\\n\\n'); // Double line breaks between pages\n\n// Return with both raw content and formatted content\nreturn [{\n  json: {\n    content: combinedContent,\n    rawContent: items.map((item, index) => ({\n      pageNumber: index + 1,\n      content: convertMarkdownToPlainText(String(item.data || item.content || item.text || item))\n    }))\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        256
+      ],
+      "id": "3a2907e4-0bec-4e62-ab8b-7ce4b920d118",
+      "name": "Preprocessing MDX 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $('Categories or URLs').first().json.message;\n\nconst content = data.content;\n\nconst urls = [];\n\nObject.keys(content).forEach(key => {\n  if (key.startsWith('loc')) {\n    urls.push({ json: { url: content[key] } });\n  }\n});\n\nreturn urls;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        256
+      ],
+      "id": "125766cf-a1cc-405d-bd69-cbf569422c07",
+      "name": "URL For Loop Code 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $('Categories or URLs').first().json.message;\n\nconst content = data.content;\n\nconst urls = [];\n\nObject.keys(content).forEach(key => {\n  if (key.startsWith('loc')) {\n    urls.push({ json: { url: content[key] } });\n  }\n});\n\nreturn urls;\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        688
+      ],
+      "id": "9d58cb2f-601c-4d29-b945-51bc950776f2",
+      "name": "URL For Loop Code 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = $input.first().json.message.content;\n\n// Extract all `loc1`, `loc2`, etc., into an array\nconst urls = Object.values(content);\n\n// Return each URL as a separate item\nreturn urls.map(url => ({\n  json: { url }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        1008
+      ],
+      "id": "c406e773-35fb-4461-a523-c1f323d146bd",
+      "name": "URL For Loop Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst items = $input.all();\n\n// Function to convert markdown to plain text\nfunction convertMarkdownToPlainText(markdown) {\n  // Ensure we're working with a string\n  let plainText = String(markdown);\n  \n  // Remove links: [text](URL)\n  plainText = plainText.replace(/\\[([^\\]]+)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove images: ![alt text](URL)\n  plainText = plainText.replace(/!\\[([^\\]]*)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove headers: # Header\n  plainText = plainText.replace(/(#+)\\s*(.*)/g, '$2');\n  \n  // Remove bold and italic formatting\n  plainText = plainText.replace(/\\*\\*|\\*|__|_/g, '');\n  \n  // Remove HTML special characters\n  plainText = plainText.replace(/([<>])/g, '');\n  \n  // Remove extra line breaks\n  plainText = plainText.replace(/\\n\\s*\\n/g, '\\n');\n  \n  // Remove bullet points or numbered list formatting\n  plainText = plainText.replace(/^\\s*[-*+]\\s+/gm, '');\n  \n  return plainText.trim();\n}\n\n// Process all items and combine them with page numbers and clear formatting\nconst combinedContent = items.map((item, index) => {\n  let content;\n  if (typeof item === 'object' && item !== null) {\n    content = item.data || item.content || item.text || JSON.stringify(item);\n  } else {\n    content = String(item);\n  }\n  \n  const pageNumber = index + 1;\n  const processedContent = convertMarkdownToPlainText(content);\n  \n  return `Page ${pageNumber}\\n──────────────────\\n\\n${processedContent}\\n\\n\\n`;\n}).join('\\n\\n'); // Double line breaks between pages\n\n// Return with both raw content and formatted content\nreturn [{\n  json: {\n    content: combinedContent,\n    rawContent: items.map((item, index) => ({\n      pageNumber: index + 1,\n      content: convertMarkdownToPlainText(String(item.data || item.content || item.text || item))\n    }))\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        688
+      ],
+      "id": "d26f9573-08ff-4b36-b55f-c37c5bcb666a",
+      "name": "Preprocessing MDX 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst items = $input.all();\n\n// Function to convert markdown to plain text\nfunction convertMarkdownToPlainText(markdown) {\n  // Ensure we're working with a string\n  let plainText = String(markdown);\n  \n  // Remove links: [text](URL)\n  plainText = plainText.replace(/\\[([^\\]]+)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove images: ![alt text](URL)\n  plainText = plainText.replace(/!\\[([^\\]]*)\\]\\([^\\)]+\\)/g, '$1');\n  \n  // Remove headers: # Header\n  plainText = plainText.replace(/(#+)\\s*(.*)/g, '$2');\n  \n  // Remove bold and italic formatting\n  plainText = plainText.replace(/\\*\\*|\\*|__|_/g, '');\n  \n  // Remove HTML special characters\n  plainText = plainText.replace(/([<>])/g, '');\n  \n  // Remove extra line breaks\n  plainText = plainText.replace(/\\n\\s*\\n/g, '\\n');\n  \n  // Remove bullet points or numbered list formatting\n  plainText = plainText.replace(/^\\s*[-*+]\\s+/gm, '');\n  \n  return plainText.trim();\n}\n\n// Process all items and combine them with page numbers and clear formatting\nconst combinedContent = items.map((item, index) => {\n  let content;\n  if (typeof item === 'object' && item !== null) {\n    content = item.data || item.content || item.text || JSON.stringify(item);\n  } else {\n    content = String(item);\n  }\n  \n  const pageNumber = index + 1;\n  const processedContent = convertMarkdownToPlainText(content);\n  \n  return `Page ${pageNumber}\\n──────────────────\\n\\n${processedContent}\\n\\n\\n`;\n}).join('\\n\\n'); // Double line breaks between pages\n\n// Return with both raw content and formatted content\nreturn [{\n  json: {\n    content: combinedContent,\n    rawContent: items.map((item, index) => ({\n      pageNumber: index + 1,\n      content: convertMarkdownToPlainText(String(item.data || item.content || item.text || item))\n    }))\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1008
+      ],
+      "id": "78ee3dba-f048-415f-9533-40ac2118c881",
+      "name": "Preprocessing MDX"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          },
+          "allowUnauthorizedCerts": false,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        688
+      ],
+      "id": "bdb275ee-421a-4ff6-bca5-5e0bba12ce1d",
+      "name": "GET URLs 1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          },
+          "allowUnauthorizedCerts": false,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        256
+      ],
+      "id": "48dbf704-dd92-472e-ad2f-821636598afc",
+      "name": "GET URLs 2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Extract the URL from the prompts and return a JSON object as below\n\n{\n\"loc1\":\"example1.com\",\n\"loc2\":\"example2.com\",\n\"loc3\":\"example3.com\"\n}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        304,
+        48
+      ],
+      "id": "90a18d60-1818-4117-8d8f-193308d6aa81",
+      "name": "URL Lists Scraping Agent",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.content.sitemap }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        624
+      ],
+      "id": "1c36aa93-6377-44eb-b4cc-82d122c6cdd1",
+      "name": "HTTP Request - Sitemap"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Make nice URLs').item.json.message.content.baseUrl }}/sitemap.xml",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        768
+      ],
+      "id": "bb48bff6-24e7-403d-a90a-c14daa6bae46",
+      "name": "HTTP Request - sitemap.xml",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Make nice URLs').item.json.message.content.baseUrl }}/sitemap_index.xml",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        928
+      ],
+      "id": "2ab8d527-da29-4bf9-acb5-e8a47495d061",
+      "name": "HTTP Request - sitemap_index.xml",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Make nice URLs').item.json.message.content.baseUrl }}/site-map.xml",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        1088
+      ],
+      "id": "85826e00-d267-4103-b36f-41177cc3edc9",
+      "name": "HTTP Request - site-map.xml",
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Make nice URLs').item.json.message.content.baseUrl }}/sitemap.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        1248
+      ],
+      "id": "0eab16a8-f2c6-4529-a287-2d8829f50c37",
+      "name": "HTTP Request - sitemap.json",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "Lists URL Scraping\n\nSome websites does not have robots.txt or sitemaps. \n\nIf the application still needs to scrap the website, please follow the instructions. \n\nUse Link Grabber to scrape all the Meta Data URLs and share it with the Agent. \n\nThis agent will scrap all the content and save it in Pinecone Vector Store.",
+        "height": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -272
+      ],
+      "id": "c3c5eecf-1d80-4bbb-94f9-a65744bd3834",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 20,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        432
+      ],
+      "id": "76cc3ee0-8e91-4763-a70c-820ea022229d",
+      "name": "Recursive Character Text Splitter2"
+    },
+    {
+      "parameters": {
+        "name": "flowise_vector",
+        "description": "gives answers relatet to the flowise, n8n and langchain"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        128
+      ],
+      "id": "61c48e3a-6549-4d74-9a7c-a3a914a645ee",
+      "name": "N8N Vector DB"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If sitemap exists": {
+      "main": [
+        [
+          {
+            "node": "Search Sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request - sitemap.xml",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - sitemap_index.xml",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - site-map.xml",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - sitemap.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check robots": {
+      "main": [
+        [
+          {
+            "node": "If sitemap exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If sitemap exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "find URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "URL For Loop Code 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "URL For Loop Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Preprocessing MDX 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown1": {
+      "main": [
+        [
+          {
+            "node": "Preprocessing MDX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Categories or URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find URLs": {
+      "main": [
+        [
+          {
+            "node": "GET URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET URLs": {
+      "main": [
+        [
+          {
+            "node": "Markdown1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET XML": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Make nice URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "N8N Vector DB",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store2": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "N8N Vector DB",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make nice URLs": {
+      "main": [
+        [
+          {
+            "node": "Check robots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Sitemap": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categories or URLs": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "URL Lists Scraping Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown2": {
+      "main": [
+        [
+          {
+            "node": "Preprocessing MDX 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store3",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader2": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store3",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprocessing MDX 2": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL For Loop Code 2": {
+      "main": [
+        [
+          {
+            "node": "GET URLs 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL For Loop Code 1": {
+      "main": [
+        [
+          {
+            "node": "GET URLs 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL For Loop Code": {
+      "main": [
+        [
+          {
+            "node": "GET XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprocessing MDX 1": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprocessing MDX": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET URLs 1": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET URLs 2": {
+      "main": [
+        [
+          {
+            "node": "Markdown2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Lists Scraping Agent": {
+      "main": [
+        [
+          {
+            "node": "URL For Loop Code 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Sitemap": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - sitemap.xml": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request - sitemap_index.xml": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request - site-map.xml": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request - sitemap.json": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter2": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader2",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "N8N Vector DB": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0b5747fe-3e6e-4332-8aa1-c3de8dafda87",
+  "meta": {
+    "instanceId": "6717472e0cab5035fbb6232a46629a9ea1bd0552058e36c41b7384a6e5210b97"
+  },
+  "id": "s2VxddnqB38C8Dm0",
+  "tags": []
+}

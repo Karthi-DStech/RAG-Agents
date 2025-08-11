@@ -1,0 +1,816 @@
+{
+  "nodes": [
+    {
+      "id": "toolAgent_0",
+      "position": {
+        "x": 841.3873876491837,
+        "y": 323.0721289935031
+      },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "label": "Tool Agent",
+        "version": 2,
+        "name": "toolAgent",
+        "type": "AgentExecutor",
+        "baseClasses": [
+          "AgentExecutor",
+          "BaseChain",
+          "Runnable"
+        ],
+        "category": "Agents",
+        "description": "Agent that uses Function Calling to pick the tools and args to call",
+        "inputParams": [
+          {
+            "label": "System Message",
+            "name": "systemMessage",
+            "type": "string",
+            "default": "You are a helpful AI assistant.",
+            "description": "If Chat Prompt Template is provided, this will be ignored",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-systemMessage-string"
+          },
+          {
+            "label": "Max Iterations",
+            "name": "maxIterations",
+            "type": "number",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-maxIterations-number"
+          },
+          {
+            "label": "Enable Detailed Streaming",
+            "name": "enableDetailedStreaming",
+            "type": "boolean",
+            "default": false,
+            "description": "Stream detailed intermediate steps during agent execution",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-enableDetailedStreaming-boolean"
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Tools",
+            "name": "tools",
+            "type": "Tool",
+            "list": true,
+            "id": "toolAgent_0-input-tools-Tool"
+          },
+          {
+            "label": "Memory",
+            "name": "memory",
+            "type": "BaseChatMemory",
+            "id": "toolAgent_0-input-memory-BaseChatMemory"
+          },
+          {
+            "label": "Tool Calling Chat Model",
+            "name": "model",
+            "type": "BaseChatModel",
+            "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat",
+            "id": "toolAgent_0-input-model-BaseChatModel"
+          },
+          {
+            "label": "Chat Prompt Template",
+            "name": "chatPromptTemplate",
+            "type": "ChatPromptTemplate",
+            "description": "Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable",
+            "optional": true,
+            "id": "toolAgent_0-input-chatPromptTemplate-ChatPromptTemplate"
+          },
+          {
+            "label": "Input Moderation",
+            "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+            "name": "inputModeration",
+            "type": "Moderation",
+            "optional": true,
+            "list": true,
+            "id": "toolAgent_0-input-inputModeration-Moderation"
+          }
+        ],
+        "inputs": {
+          "tools": [
+            "{{writeFile_0.data.instance}}",
+            "{{calculator_0.data.instance}}",
+            "{{braveSearchAPI_0.data.instance}}",
+            "{{currentDateTime_0.data.instance}}",
+            "{{composio_0.data.instance}}",
+            "{{customTool_0.data.instance}}"
+          ],
+          "memory": "{{bufferWindowMemory_0.data.instance}}",
+          "model": "{{chatOpenRouter_0.data.instance}}",
+          "chatPromptTemplate": "",
+          "systemMessage": "You are a helpful AI assistant.",
+          "inputModeration": "",
+          "maxIterations": "",
+          "enableDetailedStreaming": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "toolAgent_0-output-toolAgent-AgentExecutor|BaseChain|Runnable",
+            "name": "toolAgent",
+            "label": "AgentExecutor",
+            "description": "Agent that uses Function Calling to pick the tools and args to call",
+            "type": "AgentExecutor | BaseChain | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 483,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 841.3873876491837,
+        "y": 323.0721289935031
+      },
+      "dragging": false
+    },
+    {
+      "id": "chatOpenRouter_0",
+      "position": {
+        "x": 485.985468575079,
+        "y": 322.27776566288713
+      },
+      "type": "customNode",
+      "data": {
+        "id": "chatOpenRouter_0",
+        "label": "ChatOpenRouter",
+        "version": 1,
+        "name": "chatOpenRouter",
+        "type": "ChatOpenRouter",
+        "baseClasses": [
+          "ChatOpenRouter",
+          "BaseChatModel",
+          "BaseLanguageModel",
+          "Runnable"
+        ],
+        "category": "Chat Models",
+        "description": "Wrapper around Open Router Inference API",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "openRouterApi"
+            ],
+            "optional": true,
+            "id": "chatOpenRouter_0-input-credential-credential"
+          },
+          {
+            "label": "Model Name",
+            "name": "modelName",
+            "type": "string",
+            "placeholder": "openai/gpt-3.5-turbo",
+            "id": "chatOpenRouter_0-input-modelName-string"
+          },
+          {
+            "label": "Temperature",
+            "name": "temperature",
+            "type": "number",
+            "step": 0.1,
+            "default": 0.9,
+            "optional": true,
+            "id": "chatOpenRouter_0-input-temperature-number"
+          },
+          {
+            "label": "Streaming",
+            "name": "streaming",
+            "type": "boolean",
+            "default": true,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-streaming-boolean"
+          },
+          {
+            "label": "Max Tokens",
+            "name": "maxTokens",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-maxTokens-number"
+          },
+          {
+            "label": "Top Probability",
+            "name": "topP",
+            "type": "number",
+            "step": 0.1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-topP-number"
+          },
+          {
+            "label": "Frequency Penalty",
+            "name": "frequencyPenalty",
+            "type": "number",
+            "step": 0.1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-frequencyPenalty-number"
+          },
+          {
+            "label": "Presence Penalty",
+            "name": "presencePenalty",
+            "type": "number",
+            "step": 0.1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-presencePenalty-number"
+          },
+          {
+            "label": "Timeout",
+            "name": "timeout",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-timeout-number"
+          },
+          {
+            "label": "BasePath",
+            "name": "basepath",
+            "type": "string",
+            "optional": true,
+            "default": "https://openrouter.ai/api/v1",
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-basepath-string"
+          },
+          {
+            "label": "BaseOptions",
+            "name": "baseOptions",
+            "type": "json",
+            "optional": true,
+            "additionalParams": true,
+            "id": "chatOpenRouter_0-input-baseOptions-json"
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Cache",
+            "name": "cache",
+            "type": "BaseCache",
+            "optional": true,
+            "id": "chatOpenRouter_0-input-cache-BaseCache"
+          }
+        ],
+        "inputs": {
+          "cache": "",
+          "modelName": "anthropic/claude-3.7-sonnet",
+          "temperature": 0.9,
+          "streaming": true,
+          "maxTokens": "",
+          "topP": "",
+          "frequencyPenalty": "",
+          "presencePenalty": "",
+          "timeout": "",
+          "basepath": "https://openrouter.ai/api/v1",
+          "baseOptions": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "chatOpenRouter_0-output-chatOpenRouter-ChatOpenRouter|BaseChatModel|BaseLanguageModel|Runnable",
+            "name": "chatOpenRouter",
+            "label": "ChatOpenRouter",
+            "description": "Wrapper around Open Router Inference API",
+            "type": "ChatOpenRouter | BaseChatModel | BaseLanguageModel | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 574,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 485.985468575079,
+        "y": 322.27776566288713
+      },
+      "dragging": false
+    },
+    {
+      "id": "bufferWindowMemory_0",
+      "position": {
+        "x": 161.8276211356325,
+        "y": 331.39568240843386
+      },
+      "type": "customNode",
+      "data": {
+        "id": "bufferWindowMemory_0",
+        "label": "Buffer Window Memory",
+        "version": 2,
+        "name": "bufferWindowMemory",
+        "type": "BufferWindowMemory",
+        "baseClasses": [
+          "BufferWindowMemory",
+          "BaseChatMemory",
+          "BaseMemory"
+        ],
+        "category": "Memory",
+        "description": "Uses a window of size k to surface the last k back-and-forth to use as memory",
+        "inputParams": [
+          {
+            "label": "Size",
+            "name": "k",
+            "type": "number",
+            "default": "4",
+            "description": "Window of size k to surface the last k back-and-forth to use as memory.",
+            "id": "bufferWindowMemory_0-input-k-number"
+          },
+          {
+            "label": "Session Id",
+            "name": "sessionId",
+            "type": "string",
+            "description": "If not specified, a random id will be used. Learn <a target=\"_blank\" href=\"https://docs.flowiseai.com/memory#ui-and-embedded-chat\">more</a>",
+            "default": "",
+            "optional": true,
+            "additionalParams": true,
+            "id": "bufferWindowMemory_0-input-sessionId-string"
+          },
+          {
+            "label": "Memory Key",
+            "name": "memoryKey",
+            "type": "string",
+            "default": "chat_history",
+            "additionalParams": true,
+            "id": "bufferWindowMemory_0-input-memoryKey-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "k": "20",
+          "sessionId": "",
+          "memoryKey": "chat_history"
+        },
+        "outputAnchors": [
+          {
+            "id": "bufferWindowMemory_0-output-bufferWindowMemory-BufferWindowMemory|BaseChatMemory|BaseMemory",
+            "name": "bufferWindowMemory",
+            "label": "BufferWindowMemory",
+            "description": "Uses a window of size k to surface the last k back-and-forth to use as memory",
+            "type": "BufferWindowMemory | BaseChatMemory | BaseMemory"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 329,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 161.8276211356325,
+        "y": 331.39568240843386
+      },
+      "dragging": false
+    },
+    {
+      "id": "calculator_0",
+      "position": {
+        "x": 469.76515032191367,
+        "y": 109.95321389264711
+      },
+      "type": "customNode",
+      "data": {
+        "id": "calculator_0",
+        "label": "Calculator",
+        "version": 1,
+        "name": "calculator",
+        "type": "Calculator",
+        "baseClasses": [
+          "Calculator",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Perform calculations on response",
+        "inputParams": [],
+        "inputAnchors": [],
+        "inputs": {},
+        "outputAnchors": [
+          {
+            "id": "calculator_0-output-calculator-Calculator|Tool|StructuredTool|Runnable",
+            "name": "calculator",
+            "label": "Calculator",
+            "description": "Perform calculations on response",
+            "type": "Calculator | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 142,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 469.76515032191367,
+        "y": 109.95321389264711
+      },
+      "dragging": false
+    },
+    {
+      "id": "braveSearchAPI_0",
+      "position": {
+        "x": 822.8602528675583,
+        "y": -5.7916537467966975
+      },
+      "type": "customNode",
+      "data": {
+        "id": "braveSearchAPI_0",
+        "label": "BraveSearch API",
+        "version": 1,
+        "name": "braveSearchAPI",
+        "type": "BraveSearchAPI",
+        "baseClasses": [
+          "BraveSearchAPI",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Wrapper around BraveSearch API - a real-time API to access Brave search results",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "braveSearchApi"
+            ],
+            "id": "braveSearchAPI_0-input-credential-credential"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {},
+        "outputAnchors": [
+          {
+            "id": "braveSearchAPI_0-output-braveSearchAPI-BraveSearchAPI|Tool|StructuredTool|Runnable",
+            "name": "braveSearchAPI",
+            "label": "BraveSearchAPI",
+            "description": "Wrapper around BraveSearch API - a real-time API to access Brave search results",
+            "type": "BraveSearchAPI | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 274,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 822.8602528675583,
+        "y": -5.7916537467966975
+      },
+      "dragging": false
+    },
+    {
+      "id": "currentDateTime_0",
+      "position": {
+        "x": 1206.7229784565995,
+        "y": 54.27846743316777
+      },
+      "type": "customNode",
+      "data": {
+        "id": "currentDateTime_0",
+        "label": "CurrentDateTime",
+        "version": 1,
+        "name": "currentDateTime",
+        "type": "CurrentDateTime",
+        "baseClasses": [
+          "CurrentDateTime",
+          "Tool"
+        ],
+        "category": "Tools",
+        "description": "Get todays day, date and time.",
+        "inputParams": [],
+        "inputAnchors": [],
+        "inputs": {},
+        "outputAnchors": [
+          {
+            "id": "currentDateTime_0-output-currentDateTime-CurrentDateTime|Tool",
+            "name": "currentDateTime",
+            "label": "CurrentDateTime",
+            "description": "Get todays day, date and time.",
+            "type": "CurrentDateTime | Tool"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 142,
+      "positionAbsolute": {
+        "x": 1206.7229784565995,
+        "y": 54.27846743316777
+      },
+      "selected": false
+    },
+    {
+      "id": "writeFile_0",
+      "position": {
+        "x": 1208.1881033634277,
+        "y": 276.97745327108476
+      },
+      "type": "customNode",
+      "data": {
+        "id": "writeFile_0",
+        "label": "Write File",
+        "version": 1,
+        "name": "writeFile",
+        "type": "WriteFile",
+        "baseClasses": [
+          "WriteFile",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Write file to disk",
+        "inputParams": [
+          {
+            "label": "Base Path",
+            "name": "basePath",
+            "placeholder": "C:\\Users\\User\\Desktop",
+            "type": "string",
+            "optional": true,
+            "id": "writeFile_0-input-basePath-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "basePath": "C:\\Users\\Arnold\\Desktop\\PDFs"
+        },
+        "outputAnchors": [
+          {
+            "id": "writeFile_0-output-writeFile-WriteFile|Tool|StructuredTool|Runnable",
+            "name": "writeFile",
+            "label": "WriteFile",
+            "description": "Write file to disk",
+            "type": "WriteFile | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 277,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1208.1881033634277,
+        "y": 276.97745327108476
+      },
+      "dragging": false
+    },
+    {
+      "id": "composio_0",
+      "position": {
+        "x": 1211.5059085490734,
+        "y": 606.5367368771404
+      },
+      "type": "customNode",
+      "data": {
+        "id": "composio_0",
+        "label": "Composio",
+        "version": 2,
+        "name": "composio",
+        "type": "Composio",
+        "baseClasses": [
+          "Composio",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Toolset with over 250+ Apps for building AI-powered applications",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "composioApi"
+            ],
+            "id": "composio_0-input-credential-credential"
+          },
+          {
+            "label": "App Name",
+            "name": "appName",
+            "type": "asyncOptions",
+            "loadMethod": "listApps",
+            "description": "Select the app to connect with",
+            "refresh": true,
+            "id": "composio_0-input-appName-asyncOptions"
+          },
+          {
+            "label": "Auth Status",
+            "name": "authStatus",
+            "type": "asyncOptions",
+            "loadMethod": "authStatus",
+            "placeholder": "Connection status will appear here",
+            "refresh": true,
+            "id": "composio_0-input-authStatus-asyncOptions"
+          },
+          {
+            "label": "Actions to Use",
+            "name": "actions",
+            "type": "asyncMultiOptions",
+            "loadMethod": "listActions",
+            "description": "Select the actions you want to use",
+            "refresh": true,
+            "id": "composio_0-input-actions-asyncMultiOptions"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "appName": "googlecalendar",
+          "authStatus": "Connected",
+          "actions": "[\"GOOGLECALENDAR_CREATE_EVENT\",\"GOOGLECALENDAR_GET_CALENDAR\"]"
+        },
+        "outputAnchors": [
+          {
+            "id": "composio_0-output-composio-Composio|Tool|StructuredTool|Runnable",
+            "name": "composio",
+            "label": "Composio",
+            "description": "Toolset with over 250+ Apps for building AI-powered applications",
+            "type": "Composio | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 617,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1211.5059085490734,
+        "y": 606.5367368771404
+      },
+      "dragging": false
+    },
+    {
+      "id": "customTool_0",
+      "position": {
+        "x": 856.5286188891534,
+        "y": 856.3253756429383
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_0",
+        "label": "Custom Tool",
+        "version": 3,
+        "name": "customTool",
+        "type": "CustomTool",
+        "baseClasses": [
+          "CustomTool",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Use custom tool you've created in Flowise within chatflow",
+        "inputParams": [
+          {
+            "label": "Select Tool",
+            "name": "selectedTool",
+            "type": "asyncOptions",
+            "loadMethod": "listTools",
+            "id": "customTool_0-input-selectedTool-asyncOptions"
+          },
+          {
+            "label": "Return Direct",
+            "name": "returnDirect",
+            "description": "Return the output of the tool directly to the user",
+            "type": "boolean",
+            "optional": true,
+            "id": "customTool_0-input-returnDirect-boolean"
+          },
+          {
+            "label": "Custom Tool Name",
+            "name": "customToolName",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolName-string"
+          },
+          {
+            "label": "Custom Tool Description",
+            "name": "customToolDesc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolDesc-string"
+          },
+          {
+            "label": "Custom Tool Schema",
+            "name": "customToolSchema",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolSchema-string"
+          },
+          {
+            "label": "Custom Tool Func",
+            "name": "customToolFunc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolFunc-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "selectedTool": "a7f3cd41-3a0b-45aa-8623-5d4eaa2104cb",
+          "returnDirect": "",
+          "customToolName": "",
+          "customToolDesc": "",
+          "customToolSchema": "",
+          "customToolFunc": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+            "name": "customTool",
+            "label": "CustomTool",
+            "description": "Use custom tool you've created in Flowise within chatflow",
+            "type": "CustomTool | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 371,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 856.5286188891534,
+        "y": 856.3253756429383
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "chatOpenRouter_0",
+      "sourceHandle": "chatOpenRouter_0-output-chatOpenRouter-ChatOpenRouter|BaseChatModel|BaseLanguageModel|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-model-BaseChatModel",
+      "type": "buttonedge",
+      "id": "chatOpenRouter_0-chatOpenRouter_0-output-chatOpenRouter-ChatOpenRouter|BaseChatModel|BaseLanguageModel|Runnable-toolAgent_0-toolAgent_0-input-model-BaseChatModel"
+    },
+    {
+      "source": "bufferWindowMemory_0",
+      "sourceHandle": "bufferWindowMemory_0-output-bufferWindowMemory-BufferWindowMemory|BaseChatMemory|BaseMemory",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-memory-BaseChatMemory",
+      "type": "buttonedge",
+      "id": "bufferWindowMemory_0-bufferWindowMemory_0-output-bufferWindowMemory-BufferWindowMemory|BaseChatMemory|BaseMemory-toolAgent_0-toolAgent_0-input-memory-BaseChatMemory"
+    },
+    {
+      "source": "calculator_0",
+      "sourceHandle": "calculator_0-output-calculator-Calculator|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "calculator_0-calculator_0-output-calculator-Calculator|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "braveSearchAPI_0",
+      "sourceHandle": "braveSearchAPI_0-output-braveSearchAPI-BraveSearchAPI|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "braveSearchAPI_0-braveSearchAPI_0-output-braveSearchAPI-BraveSearchAPI|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "currentDateTime_0",
+      "sourceHandle": "currentDateTime_0-output-currentDateTime-CurrentDateTime|Tool",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "currentDateTime_0-currentDateTime_0-output-currentDateTime-CurrentDateTime|Tool-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "writeFile_0",
+      "sourceHandle": "writeFile_0-output-writeFile-WriteFile|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "writeFile_0-writeFile_0-output-writeFile-WriteFile|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "composio_0",
+      "sourceHandle": "composio_0-output-composio-Composio|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "composio_0-composio_0-output-composio-Composio|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "customTool_0",
+      "sourceHandle": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customTool_0-customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    }
+  ]
+}

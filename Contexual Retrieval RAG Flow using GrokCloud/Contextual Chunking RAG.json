@@ -1,0 +1,809 @@
+{
+  "name": "Contextual Chunking RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "e0166dc7-845a-4364-b659-0d9942352c41",
+      "name": "When chat message received",
+      "webhookId": "8f0a07ab-64c6-4035-83e1-7452f30a50a8"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        128
+      ],
+      "id": "8b60c1a1-a789-42cc-997e-c635e685d254",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        128
+      ],
+      "id": "e607e71d-1626-46da-b798-0d8e64269341",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        176
+      ],
+      "id": "eaaf764f-2e8e-44aa-b48b-43f2acedc438",
+      "name": "Embeddings OpenAI1"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "Pinecone",
+        "toolDescription": "Use this tool to search Infos about user querys",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "topK": 10,
+        "options": {
+          "pineconeNamespace": "=Info"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        608,
+        80
+      ],
+      "id": "14aacdfc-0906-40d6-824c-b187f0e825c8",
+      "name": "Pinecone VS"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {{JSON.stringify($json.text)}}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        416
+      ],
+      "id": "18f2b72f-a9fa-40d9-9ea2-22da465f2e20",
+      "name": "PDF TO DATA"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {{ JSON.stringify($json.data) }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        416
+      ],
+      "id": "028c3307-7aa4-4ee0-95ec-4e2e187f25ad",
+      "name": "Document Data"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1YOgi7wgyGK90oVlE59zyuT-neFDzZc6B",
+          "mode": "list",
+          "cachedResultName": "Tesla Earnings",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1YOgi7wgyGK90oVlE59zyuT-neFDzZc6B"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        560
+      ],
+      "id": "573b380a-9a32-480a-84ca-ef2017ac0642",
+      "name": "Contextual Rag"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "chunks",
+        "options": {
+          "destinationFieldName": "chunk"
+        }
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        416
+      ],
+      "id": "34c6d64a-0747-453a-9af1-5d7e599cf348",
+      "name": "Split Chunks"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<document> \n{{ $('Document Data').item.json.data }}\n</document> \n\nHere is the chunk we want to situate within the overall document:\n\n<chunk> \n{{$json.chunk}} \n</chunk> \n\nPlease:\n- Provide a short and succinct **context** to situate this chunk within the document for improved search retrieval.\n- Return the **original chunk** exactly as provided unless a correction is necessary.\n- If the chunk contains an **incomplete number, percentage, or entity**, correct it using the full document.\n- If part of a **sentence is cut off**, reconstruct the missing words only if necessary for clarity.\n- If the chunk is part of a table, include the complete table entry to maintain data integrity\n- Do not add any additional explanations or formatting beyond the required output.\n\nFill in the following format:\n[succinct context] : [original chunk or corrected version if necessary]\n\nYour response should contain only the text that replaces these placeholders, without including the placeholder labels themselves."
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        800,
+        640
+      ],
+      "id": "9d080667-3e1b-4fe2-a46c-f1cfdc34606d",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "separator": " ###SPLIT### ",
+        "chunkSize": 2000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        1056
+      ],
+      "id": "8a1e29c8-dce2-42f6-95eb-78f10b602f21",
+      "name": "Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        528,
+        640
+      ],
+      "id": "3303cebd-b233-4fba-99e0-378662cdc7aa",
+      "name": "CR Extract from Text"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a personal assistent with RAG. \nYou have access to a Pinecone Vector Database. Your job is to fetch relevant information from the knowledge base that addresses the user query.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        368,
+        -112
+      ],
+      "id": "fe779848-295d-4488-8965-752a97d63441",
+      "name": "RAG Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        560
+      ],
+      "id": "20253ce4-fd2f-415e-972c-a12fa907c0dd",
+      "name": "Loop"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $('Contextual Rag').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $('Contextual Rag').item.json.mimeType }}",
+              "type": "string"
+            },
+            {
+              "id": "9bde4d7f-e4f3-4ebd-9338-dce1350f9eab",
+              "name": "file_url",
+              "value": "={{ $('Contextual Rag').item.json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "77d782de-169d-4a46-8a8e-a3831c04d90f",
+              "name": "file_title",
+              "value": "={{ $('Contextual Rag').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "8c444ba2-e384-45a3-9492-3c9d21b82cd5",
+              "name": "namespace",
+              "value": "={{ $json.output.namespace }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b04255e5-78e5-463b-bd1e-b1f3cec1acf4",
+      "name": "FILE INFO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        160,
+        560
+      ],
+      "id": "6ac83659-37de-4078-8898-d070ef46bbf8",
+      "name": "download"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('FILE INFO').item.json.file_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8d105126-f9ee-4b83-9afb-8f410c455124"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "b69f5605-0179-4b02-9a32-e34bb085f82d",
+                    "leftValue": "={{ $('FILE INFO').item.json.file_type }}",
+                    "rightValue": "text/plain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "52934af0-5ff5-42fc-b49a-87d1bd39ff83",
+      "name": "SWITCH",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        320,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        448,
+        416
+      ],
+      "id": "5277fb8d-2a73-45c3-9504-ee738cee436b",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const chunkSize = 1500;\nconst chunkOverlap = 50;\nconst text = $input.item.json.data.replace(/\\n/, '');\n\nconst chunks = [];\nlet remainingText = text;\n\nwhile (remainingText.length > 0) {\n    let splitPoint;\n\n    // Try splitting at paragraph level first\n    splitPoint = remainingText.lastIndexOf(\"\\n\\n\", chunkSize);\n    \n    // If no paragraph split, try splitting at sentence level\n    if (splitPoint === -1) {\n        splitPoint = remainingText.lastIndexOf(\". \", chunkSize);\n    }\n\n    // If no sentence split, try splitting at word level\n    if (splitPoint === -1) {\n        splitPoint = remainingText.lastIndexOf(\" \", chunkSize);\n    }\n\n    // If still no split point, force cut at chunkSize\n    if (splitPoint === -1 || splitPoint < chunkSize * 0.5) {  \n        splitPoint = chunkSize; // Hard split if no good split point\n    }\n\n    // Extract chunk and adjust remaining text with overlap\n    let chunk = remainingText.substring(0, splitPoint).trim();\n    chunks.push(chunk);\n\n    // Move the pointer forward while keeping the overlap\n    remainingText = remainingText.substring(Math.max(0, splitPoint - chunkOverlap)).trim();\n\n    // Break if remaining text is too small to form another chunk\n    if (remainingText.length < chunkSize * 0.2) {\n        chunks.push(remainingText);\n        break;\n    }\n}\n\nreturn { chunks };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        416
+      ],
+      "id": "81d59578-6664-427b-a8b6-27d5a7ad7856",
+      "name": "Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "scrape",
+          "mode": "list",
+          "cachedResultName": "scrape"
+        },
+        "options": {
+          "pineconeNamespace": "Info"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        640
+      ],
+      "id": "304c6c9a-1bae-4be7-9b75-0cad427d28c5",
+      "name": "Pinecone Vector Store"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_url",
+                "value": "Info"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        896
+      ],
+      "id": "d1a93204-5f0e-412c-a937-a8b9e4d72ff0",
+      "name": "Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        896
+      ],
+      "id": "0b07854a-36b2-4811-9b44-20156893ce47",
+      "name": "EMBEDDING"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-flash-exp:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        640,
+        896
+      ],
+      "id": "2be84c2a-323a-4883-8813-a7296d828748",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        816,
+        912
+      ],
+      "id": "257e4504-0c60-4323-a797-0f45181e25ac",
+      "name": "Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "069d067c-3534-4939-8ff4-34dee02a9436",
+              "name": "chunk",
+              "value": "={{ $('Split Chunks').item.json.chunk }}",
+              "type": "string"
+            },
+            {
+              "id": "24e01f4f-e156-47e9-a89e-9cbdccda6bd4",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c139423d-4540-406e-99d6-e659ecc8d4a0",
+      "name": "Get Values",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1136,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        896
+      ],
+      "id": "03946b22-b007-452d-868e-3f94bd9a4685",
+      "name": "OpenAI Chat Model1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone VS",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone VS": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF TO DATA": {
+      "main": [
+        [
+          {
+            "node": "Document Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Data": {
+      "main": [
+        [
+          {
+            "node": "Text Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contextual Rag": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Chunks": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Get Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CR Extract from Text": {
+      "main": [
+        [
+          {
+            "node": "Document Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop": {
+      "main": [
+        [],
+        [
+          {
+            "node": "FILE INFO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FILE INFO": {
+      "main": [
+        [
+          {
+            "node": "download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download": {
+      "main": [
+        [
+          {
+            "node": "SWITCH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SWITCH": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CR Extract from Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF": {
+      "main": [
+        [
+          {
+            "node": "PDF TO DATA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Splitter": {
+      "main": [
+        [
+          {
+            "node": "Split Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EMBEDDING": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Get Values": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb9088c1-8300-4d19-a745-d390c112352f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6717472e0cab5035fbb6232a46629a9ea1bd0552058e36c41b7384a6e5210b97"
+  },
+  "id": "BTRLuy19oY9h1po2",
+  "tags": []
+}

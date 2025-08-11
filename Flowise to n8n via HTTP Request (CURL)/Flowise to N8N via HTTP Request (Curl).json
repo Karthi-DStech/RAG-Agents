@@ -1,0 +1,129 @@
+{
+  "name": "Flowise to N8N via HTTP Request (Curl)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -80
+      ],
+      "id": "09c1846b-0707-4919-8e9b-8d100a91be86",
+      "name": "When chat message received",
+      "webhookId": "27768adb-a404-4a54-adb2-ebfe5e112b51"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant and you have an HTTP request tool for connecting to Flowise. \n\nThe Flowise tool has the following: \n- Calculator\n- Brave API Search\n- Information about a database of Prompts and RAG Techniques. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "6136f84d-0b98-4129-be04-e39f1522cc3e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        128
+      ],
+      "id": "fd003b2b-a636-4218-87b6-d7b16ec102cb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ozgW74GKfurrTSxU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/v1/prediction/c82688ae-6a15-42de-ad66-9c1fa0e2eaa1",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        128
+      ],
+      "id": "d5e6b2f2-c7e3-4558-a0d0-895e1ffc0baa",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2e7c5700-28df-4396-bc57-2bb80e3f7fa0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6717472e0cab5035fbb6232a46629a9ea1bd0552058e36c41b7384a6e5210b97"
+  },
+  "id": "kgtxea8ucyp1UcYz",
+  "tags": []
+}
