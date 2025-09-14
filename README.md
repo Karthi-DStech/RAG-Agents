@@ -8,8 +8,7 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 
 ### 📂 Project Descriptions
 
-**Each project is explained and click a project name to expand its details.**
-<br>
+✨ Each project is described in detail below. Click a project name to expand and view its full explanation.
 
 
 <details>
