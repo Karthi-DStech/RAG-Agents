@@ -1,12 +1,12 @@
 # 🚀 RAG-Agents
 
-A collection of ready-to-use **RAG (Retrieval-Augmented Generation) and Agent workflows** overing Gmail/Sheets integrations, local vector DB setups, multi-agent orchestrations, and various LLM tool-using patterns. Each sub-folder contains a JSON flow that can be imported into tools like **Flowise**, **n8n**, or similar orchestrators. 
+A collection of ready-to-use **30+ RAG (Retrieval-Augmented Generation) and Agent workflows** overing Gmail/Sheets integrations, local vector DB setups, multi-agent orchestrations, and various LLM tool-using patterns. Each sub-folder contains a JSON flow that can be imported into tools like **Flowise**, **n8n**, or similar orchestrators. 
 
 Each folder is a self-contained blueprint and each workflow is made as a component which are ready to use instantly. 
 
 ---
 
-### 📂 Project Descriptions
+### 📂 [Project Descriptions](#-project-descriptions)
 
 **Claude MCP Server – Gmail Sheets & Vector DB**  
 - Triggers a Claude MCP server to pull Gmail and Google Sheets data.  
