@@ -6,7 +6,7 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 
 ---
 
-### 📂 [Project Descriptions](#-project-descriptions)
+### 📂 Project Descriptions
 
 **Claude MCP Server – Gmail Sheets & Vector DB**  
 - Triggers a Claude MCP server to pull Gmail and Google Sheets data.  
