@@ -8,25 +8,105 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 
 ### 📂 Project Descriptions
 
-| Folder | Description |
-|--------|------------|
-| **Claude MCP Server – Gmail Sheets & Vector DB** | Sets up a Claude MCP server that listens to Gmail events and writes or reads data from Google Sheets while syncing with a Vector DB. Enables automated email analysis and context-aware document retrieval inside one flow. |
-| **Contexual Retrieval RAG Flow using GrokCloud** | Demonstrates contextual chunking and retrieval powered by GrokCloud. It enriches RAG with dynamic context windows to improve precision on long or complex documents. |
-| **Custom ChatGPT Agent – Gmail & Calendar & Sheets** | A multi-service ChatGPT agent that connects to Gmail, Google Calendar, and Sheets through webhooks. Provides unified scheduling, email summarization, and spreadsheet updates from a single conversational interface. |
-| **Flowise to n8n via HTTP Request (CURL)** | Shows how to trigger n8n automations directly from Flowise using HTTP requests or cURL. Includes two sample flows: one for generic webhook triggers and another for cURL-based calls. |
-| **Leads RAG Agent** | Captures and enriches sales leads, storing them in Pinecone for vector-based semantic search. Ideal for quickly retrieving or ranking prospects by similarity and relevance. |
-| **Local RAG Agent – Ollama & PgVector – PG DB Manager** | Runs a fully local RAG pipeline with Ollama as the LLM and Postgres/pgvector as the vector database. Includes a simple database-manager interface for monitoring and updates. |
-| **Local RAG Agent – Ollama & Qdrant** | Self-hosted agent that pairs Ollama with a Qdrant vector DB. Provides private semantic search without relying on cloud services. |
-| **Local RAG Agent – Ollama & Supabase** | Combines Ollama inference with Supabase’s vector storage and authentication. Supports secure, low-latency RAG for internal or enterprise deployments. |
-| **Multi Agent RAG – Flowise** | Coordinates multiple specialized agents in Flowise for internet search, writing assistance, and vector-database retrieval. Demonstrates collaborative agent orchestration for complex tasks. |
-| **Multi Agent RAG – Serp API** | Uses the SERP API to allow multiple agents to perform real-time web searches. Integrates with n8n for downstream automation and data enrichment. |
-| **Multi MCP Server – Zapier & Gmail Sheets** | A multi-service MCP server that bridges Zapier workflows with Gmail and Google Sheets. Automates email handling and sheet updates across diverse apps. |
-| **RAG GCP & Pinecone** | Deploys a RAG pipeline on Google Cloud Platform while storing embeddings in Pinecone. Shows how to leverage scalable cloud infrastructure for high-volume retrieval. |
-| **RAG Q&A – Web Chatflow** | Web-based question-answering interface backed by a RAG pipeline. Lets users chat with their documents through a browser with instant semantic search. |
-| **RAG Q&A – Web Chatflow Ollama** | Same as the Web Chatflow project but powered entirely by a local Ollama model for privacy-first Q&A without external LLM calls. |
-| **RAG Tool Agent – calculator + Brave + Writefile + OpenRouter** | An advanced tool-using agent that can browse with Brave, perform calculations, write files, and query OpenRouter. Useful for research or automated reporting workflows. |
-| **Web Scraping Agent** | Crawls websites using robots.txt and sitemaps to collect data for later analysis or RAG ingestion. Automates large-scale content acquisition. |
-| **Web Scraping RAG Multi Agent** | A multi-agent system that scrapes web data and immediately feeds it into a RAG pipeline and saves it in vector DB. Enables near real-time knowledge vector-DB updates for live data querying. |
+**Claude MCP Server – Gmail Sheets & Vector DB**  
+- Triggers a Claude MCP server to pull Gmail and Google Sheets data.  
+- Parses emails and sheet entries, transforms them into vector embeddings, and stores them in a Vector DB.  
+- Enables semantic search and retrieval of emails or sheet records for downstream tasks.
+
+**Contexual Retrieval RAG Flow using GrokCloud**  
+- Implements a contextual-chunking pipeline with GrokCloud for more meaningful document segmentation.  
+- Groups related text into context-aware chunks before embedding.  
+- Improves retrieval-augmented generation (RAG) by providing richer, coherent context to the LLM.
+
+**Custom ChatGPT Agent – Gmail & Calendar & Sheets**  
+- Custom ChatGPT agent integrating Gmail, Google Calendar, and Sheets APIs.  
+- Automates email parsing, event creation, and sheet updates in a single conversational interface.  
+- Ideal for personal productivity and business workflow automation.
+
+**Flowise to n8n via HTTP Request (CURL)**  
+- Connects Flowise chatflows to n8n via HTTP requests or cURL.  
+- Sends chatflow outputs to n8n webhooks for automation triggers.  
+- Useful for chaining AI-driven responses with low-code workflows.
+
+**Infranodus – Graph RAG**  
+- Builds a semantic graph of documents using InfraNodus.  
+- RAG queries traverse this graph to uncover hidden relationships and topic clusters.  
+- Helps with knowledge discovery and complex information synthesis.
+
+**Leads RAG Agent**  
+- Ingests lead data and embeds it into a Pinecone vector database.  
+- Supports fast semantic search and retrieval of potential customer leads.  
+- Ideal for CRM enrichment and sales intelligence.
+
+**Local RAG Agent – Ollama & PgVector – PG DB Manager**  
+- Runs Ollama locally for inference with PgVector for vector embeddings.  
+- Includes a Postgres DB manager to handle data ingestion and queries.  
+- Provides a private, self-hosted RAG setup without cloud dependency.
+
+**Local RAG Agent – Ollama & Qdrant**  
+- Pairs local Ollama LLM inference with Qdrant vector storage.  
+- Supports high-speed similarity search and context retrieval on local data.  
+- Good for privacy-sensitive deployments needing on-prem solutions.
+
+**Local RAG Agent – Ollama & Supabase**  
+- Combines Ollama local LLM with Supabase’s managed Postgres and vector features.  
+- Enables serverless, scalable RAG applications while keeping compute local.  
+- Balances privacy with cloud convenience.
+
+**Multi Agent RAG – Flowise**  
+- Orchestrates multiple specialized agents through Flowise.  
+- Agents handle retrieval, internet search, and content generation in parallel.  
+- Great for complex tasks like research or multi-step problem solving.
+
+**Multi Agent RAG – Serp API**  
+- Multi-agent system enhanced by Serp API for live web searches.  
+- Agents fetch current data and integrate it with vector retrieval results.  
+- Useful for real-time intelligence and competitive analysis.
+
+**Multi MCP Server – Zapier & Gmail Sheets**  
+- Bridges multiple MCP servers with Zapier automations.  
+- Syncs Gmail and Google Sheets data across connected apps.  
+- Simplifies complex integrations with minimal coding.
+
+**RAG GCP & Pinecone**  
+- Implements a RAG pipeline using Google Cloud services for compute.  
+- Stores embeddings in Pinecone for scalable vector search.  
+- Suited for enterprise-level document retrieval and Q&A.
+
+**RAG Q&A – Web Chatflow**  
+- Web-based interface for asking natural-language questions over your data.  
+- Uses a RAG backend to fetch and synthesize answers from indexed documents.  
+- Great for knowledge bases, FAQs, or internal documentation.
+
+**RAG Q&A – Web Chatflow Ollama**  
+- Similar to the standard Web Chatflow but powered by a local Ollama model.  
+- Provides private, offline Q&A capabilities with RAG.  
+- Ideal when data must stay fully on-device.
+
+**RAG Tool Agent – calculator + Brave + Writefile + OpenRouter**  
+- An agent equipped with multiple tools: Brave for web search, a calculator, and file writing.  
+- Routes model requests through OpenRouter for flexible LLM selection.  
+- Handles tasks from data gathering to computation and file creation.
+
+**RAG with Supabase + PostgreSQL**  
+- Step-by-step tutorial to build a RAG solution using Supabase and Postgres.  
+- Covers document ingestion, embedding generation, and query execution.  
+- Good starting point for developers learning vector databases.
+
+**Web Scraping Agent**  
+- Automates website crawling by respecting robots.txt and using sitemaps.  
+- Extracts and cleans data for downstream indexing or analysis.  
+- Fits use cases like content aggregation or market research.
+
+**Web Scraping RAG Multi Agent**  
+- Multi-agent workflow that scrapes the web, embeds content, and provides retrieval.  
+- Supports live data collection and on-demand Q&A.  
+- Enables real-time insights from dynamic websites.
+
+**Whatsapp AI Customer – Tickets Processing & SaleAgent**  
+- WhatsApp chatbot for customer support and sales ticketing.  
+- Processes audio messages, logs interactions in Supabase, and tracks leads.  
+- Streamlines customer service and automates follow-ups.
 
 ---
 
