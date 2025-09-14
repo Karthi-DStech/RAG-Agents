@@ -26,7 +26,7 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 | **RAG Q&A – Web Chatflow Ollama** | Same as the Web Chatflow project but powered entirely by a local Ollama model for privacy-first Q&A without external LLM calls. |
 | **RAG Tool Agent – calculator + Brave + Writefile + OpenRouter** | An advanced tool-using agent that can browse with Brave, perform calculations, write files, and query OpenRouter. Useful for research or automated reporting workflows. |
 | **Web Scraping Agent** | Crawls websites using robots.txt and sitemaps to collect data for later analysis or RAG ingestion. Automates large-scale content acquisition. |
-| **Web Scraping RAG Multi Agent** | A multi-agent system that scrapes web data and immediately feeds it into a RAG pipeline. Enables near real-time knowledge graph or vector-DB updates for live data querying. |
+| **Web Scraping RAG Multi Agent** | A multi-agent system that scrapes web data and immediately feeds it into a RAG pipeline and saves it in vector DB. Enables near real-time knowledge vector-DB updates for live data querying. |
 
 ---
 
