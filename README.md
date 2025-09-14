@@ -8,9 +8,8 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 
 ### 📂 Project Descriptions
 
-<p style="background-color:#f6f8fa; padding:10px; border-radius:6px;">
-<b>Each project is explained—click a project name to expand its details.</b>
-</p>
+**Each project is explained and click a project name to expand its details.**
+<br>
 
 
 <details>
