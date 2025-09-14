@@ -7,9 +7,11 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 ---
 
 ### 📂 Project Descriptions
-```
-**Each projects are explained and please click a project name to expand its details**.
-```
+
+<p style="background-color:#f6f8fa; padding:10px; border-radius:6px;">
+<b>Each project is explained—click a project name to expand its details.</b>
+</p>
+
 
 <details>
 <summary><b>Claude MCP Server – Gmail Sheets & Vector DB</b></summary>
