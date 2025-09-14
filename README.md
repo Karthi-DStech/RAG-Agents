@@ -4,6 +4,8 @@ A collection of ready-to-use **30+ RAG (Retrieval-Augmented Generation) and Agen
 
 Each folder is a self-contained blueprint and each workflow is made as a component which are ready to use instantly. 
 
+---
+
 ### 📂 Project Descriptions
 **Each projects are explained and please click a project name to expand its details**.
 
