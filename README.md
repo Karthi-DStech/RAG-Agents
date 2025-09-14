@@ -9,7 +9,8 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 ### 📂 Project Descriptions
 
 ✨ Each project is described in detail below. Click a project name to expand and view its full explanation.
-
+<br><br>
+<br><br>
 
 <details>
 <summary><b>Claude MCP Server – Gmail Sheets & Vector DB</b></summary>
@@ -196,11 +197,14 @@ Each folder is a self-contained blueprint and each workflow is made as a compone
 ### 🚀 Quick Start Guide
 
 ```
-1. Open Flowise or n8n.
+1. Open **Flowise** or **n8n**.
 2. Click **Import Flow**.
-3. Select any `.json` file from this repo.
-4. Provide the required API keys (OpenAI, Pinecone, etc.) in the environment variables.
+3. Select any `.json` file from this repository.
+4. Provide the required API keys (e.g., **OpenAI**, **Pinecone**, etc.) in your environment variables.
+
 ```
+
+
 
 
 
